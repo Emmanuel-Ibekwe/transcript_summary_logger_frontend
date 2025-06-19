@@ -3,3 +3,8 @@ export function isPasswordInvalid(password) {
 
   return regex.test(password);
 }
+
+export function isValidEmail(email) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+}
