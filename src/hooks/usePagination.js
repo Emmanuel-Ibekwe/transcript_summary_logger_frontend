@@ -58,5 +58,26 @@ export const usePagination = ({
 
       return [...leftRange, DOTS, totalPageCount];
     }
-  });
+
+    /*
+      Case 3: No right dots to show, but left dots to be shown
+    */
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+      let rightItemCount = 3 + 2 * siblingCount;
+      let rightRange = range(
+        totalPageCount - rightItemCount + 1,
+        totalPageCount
+      );
+      return [firstPageIndex, DOTS, ...rightRange];
+    }
+
+    /*
+      Case 4: Both left and right dots to be shown
+    */
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      let middleRange = range(leftSiblingIndex, rightSiblingIndex);
+      return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
+    }
+  }, [totalCount, pageSize, siblingCount, currentPage]);
+  return paginationRange;
 };
