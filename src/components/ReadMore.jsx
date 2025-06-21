@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ReadMore = ({ text, maxChars = 100 }) => {
+const ReadMore = ({ text, maxChars = 200 }) => {
   const [expanded, setExpanded] = useState(false);
 
   const toggle = () => setExpanded((prev) => !prev);
@@ -10,10 +10,15 @@ const ReadMore = ({ text, maxChars = 100 }) => {
     expanded || !isOverflow ? text : text.slice(0, maxChars) + "...";
 
   return (
-    <div>
+    <div className="font-worksans font-normal">
       <p>{displayText}</p>
       {isOverflow && (
-        <span onClick={toggle}>{expanded ? "Read less" : "Read more"}</span>
+        <span
+          className="text-sm text-blue-400 hover:text-blue-600 hover:cursor-pointer"
+          onClick={toggle}
+        >
+          {expanded ? "Read less" : "Read more"}
+        </span>
       )}
     </div>
   );
