@@ -31,7 +31,7 @@ const Pagination = (props) => {
   }
 
   return (
-    <ul className="pagination-container bg-white p-4 border-t border-[#E0E0E0] mx-auto w-full max-w-xl justify-between">
+    <ul className="pagination-container bg-white p-4 border-t border-[#E0E0E0] mx-auto max-w-3xl w-[90%] justify-between">
       {/* Left Arrow key */}
       <li
         onClick={onPrevious}
