@@ -1,10 +1,16 @@
 import { useState } from "react";
+import axios from "axios";
 import MainContent from "../components/Maincontent";
+import { isValidEmail } from "../utils/validation";
+import { useSelector, useDispatch } from "react-redux";
+import { setCredentials } from "../store/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 
@@ -18,8 +24,28 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      setError("Email is invalid.");
+    }
+    const payload = {
+      email,
+      password,
+    };
+    try {
+      const response = await axios.post(
+        "https://transcript-summarizer-1.onrender.com/api/v1/auth/login",
+        payload
+      );
+      console.log(response.data.user);
+      dispatch(setCredentials(response.data.user));
+      setError("");
+    } catch (error) {
+      console.log(error);
+      setError(error.response.data.message);
+    }
   };
 
   return (
@@ -38,7 +64,6 @@ const Login = () => {
               id="email"
               onChange={handleEmailChange}
               value={email}
-              required
               className="w-full h-9 border-2 border-solid border-[#F2F2F2] focus:outline-none rounded-md"
             />
           </div>
@@ -73,6 +98,7 @@ const Login = () => {
             <span className="text-xs text-[#797979]">Show Password</span>
           </label>
         </div>
+        <div className="text-sm text-red-500">{error}</div>
         {/* {----Actions----} */}
         <div className="flex justify-between w-full pt-1.5">
           <div className="flex space-x-2">
