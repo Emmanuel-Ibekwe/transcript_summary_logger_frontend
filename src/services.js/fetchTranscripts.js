@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const fetchTranscripts = async (page, limit, toggle, accessToken) => {
+  let loadingState, totalCountState, transcriptsState, errorState;
+
   try {
     const response = await axios.get(
       `https://transcript-summarizer-1.onrender.com/api/v1/transcripts?page=${page}&sortTranscripts=${toggle}&limit=${limit}`,
@@ -12,7 +14,7 @@ const fetchTranscripts = async (page, limit, toggle, accessToken) => {
     );
     console.log(response.data);
     console.log(response);
-    let loadingState, totalCountState, transcriptsState, errorState;
+
     if (response.data.transcripts.length > 0) {
       loadingState = false;
     }
@@ -21,9 +23,9 @@ const fetchTranscripts = async (page, limit, toggle, accessToken) => {
     errorState = null;
     return { loadingState, totalCountState, transcriptsState, errorState };
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     loadingState = false;
-    errorState = error.message;
+    errorState = error.response.data.message;
     return { loadingState, totalCountState, transcriptsState, errorState };
   }
 };
