@@ -50,7 +50,12 @@ const AddSummary = () => {
         <Spinner />
       ) : !error ? (
         <>
-          <div className="mx-auto max-w-3xl w-[90%] bg-white rounded-md p-5">
+          <div className="mx-auto max-w-3xl w-[90%] bg-white rounded-md px-5 pb-5 pt-6">
+            <div className="max-w-[90%] mx-auto">
+              <p className="hover:font-bold hover:border-2 hover:cursor-pointer flex w-6 h-6 rounded-full items-center justify-center border text-lg">
+                &#8592;
+              </p>
+            </div>
             <Transcript
               videoId={transcript.videoId}
               title={transcript.title}
@@ -71,7 +76,7 @@ const AddSummary = () => {
                 <ReadMore text={transcript.summary >= 200} />
               ) : (
                 <textarea
-                  className="bg-[#ccc] w-full h-30 resize-none"
+                  className="bg-[#e0e0e0] w-full h-30 resize-none p-2 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400 scrollbar-track-gray-100 overflow-y-auto overflow-x-hidden"
                   name=""
                   id={`summary-${"dddd"}`}
                 />
