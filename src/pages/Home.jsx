@@ -5,6 +5,7 @@ import Pagination from "../components/Pagination";
 import Transcript from "../components/Transcript";
 import Spinner from "../components/Spinner";
 import ToggleButton from "../components/ToggleButton";
+import fetchTranscripts from "../services.js/fetchTranscripts";
 
 const ACCESS_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDUwNTE5MiwiZXhwIjoxNzUwNTkxNTkyfQ.nne0ReiCsDJQ-cqy3gnRydmmSPQPLxfutNyUkN_T2es";
@@ -32,7 +33,7 @@ const Home = () => {
         await fetchTranscripts(currentPage, LIMIT, false, ACCESS_TOKEN);
       setLoading(loadingState);
       setTotalCount(totalCountState);
-      setTranscript(transcriptsState[0]);
+      setTranscripts(transcriptsState);
       setError(errorState);
       console.log("Hello");
     }
