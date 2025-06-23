@@ -15,7 +15,7 @@ const Transcript = ({
 }) => {
   return (
     <div
-      className="max-w-[80%] mx-auto p-4 border-b-2 border-[#E0E0E0] "
+      className="max-w-[80%] mx-auto px-4 pb-4 pt-1 border-b-2 border-[#E0E0E0] "
       key={videoId}
     >
       <div className="font-robotoSlab font-bold text-lg">
