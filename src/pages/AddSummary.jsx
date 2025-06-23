@@ -4,10 +4,12 @@ import Transcript from "../components/Transcript";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
 import fetchTranscripts from "../services.js/fetchTranscripts";
+import ReadMore from "../components/ReadMore";
+import Pagination from "../components/Pagination";
 
 const AddSummary = () => {
   const ACCESS_TOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDUwNTE5MiwiZXhwIjoxNzUwNTkxNTkyfQ.nne0ReiCsDJQ-cqy3gnRydmmSPQPLxfutNyUkN_T2es";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDY1MjkzMCwiZXhwIjoxNzUwNzM5MzMwfQ.vkrpqi97msf2F2puh-_-JV8UNRSU_i1pnlA9X0lrpLA";
   const LIMIT = 1;
 
   const [transcript, setTranscript] = useState({});
@@ -30,7 +32,12 @@ const AddSummary = () => {
         await fetchTranscripts(currentPage, LIMIT, false, ACCESS_TOKEN);
       setLoading(loadingState);
       setTotalCount(totalCountState);
-      setTranscript(transcriptsState[0]);
+      if (transcriptsState.length > 0) {
+        setTranscript(transcriptsState[0]);
+      } else {
+        setTranscript(null);
+      }
+
       setError(errorState);
       console.log("Hello");
     }
@@ -41,7 +48,7 @@ const AddSummary = () => {
     <MainContent>
       {loading ? (
         <Spinner />
-      ) : (
+      ) : !error ? (
         <>
           <div className="mx-auto max-w-3xl w-[90%] bg-white rounded-md p-5">
             <Transcript
@@ -54,12 +61,21 @@ const AddSummary = () => {
               removeActionSection={true}
             />
             <div className="max-w-[80%] mx-auto p-4">
-              <label htmlFor={`summary-${"dddd"}`}>Summary</label>
-              <textarea
-                className="bg-[#ccc] w-full"
-                name=""
-                id={`summary-${"dddd"}`}
-              />
+              <label
+                htmlFor={`summary-${"dddd"}`}
+                className="font-bold text-lg pb-2"
+              >
+                Summary
+              </label>
+              {transcript.summary >= 200 ? (
+                <ReadMore text={transcript.summary >= 200} />
+              ) : (
+                <textarea
+                  className="bg-[#ccc] w-full h-30 resize-none"
+                  name=""
+                  id={`summary-${"dddd"}`}
+                />
+              )}
               <div>
                 {transcript.summary >= 200 ? (
                   <Button isSubmit={true} onClick={() => {}}>
@@ -67,13 +83,22 @@ const AddSummary = () => {
                   </Button>
                 ) : (
                   <Button isSubmit={false} onClick={() => {}}>
-                    Edit Summary
+                    {transcript.summary >= 200 ? "Edit Summary" : "Submit"}
                   </Button>
                 )}
               </div>
             </div>
+            <Pagination
+              totalCount={totalCount}
+              pageSize={LIMIT}
+              siblingCount={1}
+              currentPage={currentPage}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </>
+      ) : (
+        <p className="text-red-500 px-5">{error}</p>
       )}
     </MainContent>
   );
