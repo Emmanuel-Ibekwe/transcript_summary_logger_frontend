@@ -16,6 +16,7 @@ const Home = () => {
 
   const { isSortedTranscripts, page } = paramsObject;
   const parsedPage = parseInt(page, 10);
+  console.log("parsedPage: ", parsedPage);
 
   const [transcripts, setTranscripts] = useState([]);
   const [currentPage, setCurrentPage] = useState(parsedPage || 1);
@@ -33,6 +34,8 @@ const Home = () => {
 
   useEffect(() => {
     async function setStates() {
+      console.log("Home");
+      // setCurrentPage(parsedPage);
       const { loadingState, totalCountState, transcriptsState, errorState } =
         await fetchTranscripts(currentPage, LIMIT, toggle);
       setLoading(loadingState);
@@ -63,6 +66,7 @@ const Home = () => {
             <div className="w-full">
               {transcripts.map((el, index) => (
                 <Transcript
+                  key={el.videoId}
                   videoId={el.videoId}
                   title={el.title}
                   url={el.url}
