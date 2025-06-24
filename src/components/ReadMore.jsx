@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ReadMore = ({ text, maxChars = 200 }) => {
+const ReadMore = ({ text, maxChars = 200, isCopyRemoved = false }) => {
   const [expanded, setExpanded] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [copyError, setCopyError] = useState("");
@@ -45,12 +45,14 @@ const ReadMore = ({ text, maxChars = 200 }) => {
             {expanded ? "Read less" : "Read more"}
           </span>
         )}
-        <p
-          onClick={handleCopy}
-          className="w-24 h-6 flex justify-center items-center hover:cursor-pointer px-2 rounded-md border-2 border-slate-300 text-xs text-slate-300 active:text-grey-300 active:border-slate-300"
-        >
-          {isClicked ? "Copied!" : copyError ? copyError : "Copy text"}
-        </p>
+        {!isCopyRemoved && (
+          <p
+            onClick={handleCopy}
+            className="w-24 h-6 flex justify-center items-center hover:cursor-pointer px-2 rounded-md border-2 border-slate-300 text-xs text-slate-300 active:text-grey-300 active:border-slate-300"
+          >
+            {isClicked ? "Copied!" : copyError ? copyError : "Copy text"}
+          </p>
+        )}
       </div>
     </div>
   );
