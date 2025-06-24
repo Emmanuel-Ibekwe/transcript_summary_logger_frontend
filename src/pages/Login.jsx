@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import api from "../services/axiosInstance";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import MainContent from "../components/Maincontent";
 import { isValidEmail } from "../utils/validation";
-import { useSelector, useDispatch } from "react-redux";
 import { setCredentials } from "../store/userSlice";
 
 const Login = () => {
@@ -35,10 +37,7 @@ const Login = () => {
       password,
     };
     try {
-      const response = await axios.post(
-        "https://transcript-summarizer-1.onrender.com/api/v1/auth/login",
-        payload
-      );
+      const response = await api.post("/auth/login", payload);
       console.log(response.data.user);
       dispatch(setCredentials(response.data.user));
       setError("");
@@ -102,12 +101,18 @@ const Login = () => {
         {/* {----Actions----} */}
         <div className="flex justify-between w-full pt-1.5">
           <div className="flex space-x-2">
-            <div className="text-sm text-blue-400 hover:cursor-pointer hover:text-[#C3C3C3]">
+            <Link
+              to="/forget-password"
+              className="text-sm text-blue-400 hover:cursor-pointer hover:text-[#C3C3C3]"
+            >
               Forget password
-            </div>
-            <div className="text-sm text-blue-500 hover:cursor-pointer hover:text-[#C3C3C3]">
+            </Link>
+            <Link
+              to="/signup"
+              className="text-sm text-blue-500 hover:cursor-pointer hover:text-[#C3C3C3]"
+            >
               Sign up
-            </div>
+            </Link>
           </div>
           <div>
             <button
