@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import MainContent from "../components/Maincontent";
 import Transcript from "../components/Transcript";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
-import fetchTranscripts from "../services.js/fetchTranscripts";
+import { fetchTranscripts } from "../services/serviceApis";
 import ReadMore from "../components/ReadMore";
 import Pagination from "../components/Pagination";
 
@@ -11,9 +12,14 @@ const AddSummary = () => {
   const ACCESS_TOKEN =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDY1MjkzMCwiZXhwIjoxNzUwNzM5MzMwfQ.vkrpqi97msf2F2puh-_-JV8UNRSU_i1pnlA9X0lrpLA";
   const LIMIT = 1;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const paramsObject = Object.fromEntries(searchParams.entries());
+
+  const { isSortedTranscripts, page } = paramsObject;
+  const parsedPage = parseInt(page, 10);
 
   const [transcript, setTranscript] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parsedPage);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,10 +32,15 @@ const AddSummary = () => {
   //   setTotalCount,
   //   setError
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setSearchParams({ page, isSortedTranscripts });
+  };
+
   useEffect(() => {
     async function setStates() {
       const { loadingState, totalCountState, transcriptsState, errorState } =
-        await fetchTranscripts(currentPage, LIMIT, false, ACCESS_TOKEN);
+        await fetchTranscripts(currentPage, LIMIT, isSortedTranscripts);
       setLoading(loadingState);
       setTotalCount(totalCountState);
       if (transcriptsState.length > 0) {
@@ -98,7 +109,7 @@ const AddSummary = () => {
               pageSize={LIMIT}
               siblingCount={1}
               currentPage={currentPage}
-              onPageChange={(page) => setCurrentPage(page)}
+              onPageChange={handlePageChange}
             />
           </div>
         </>
