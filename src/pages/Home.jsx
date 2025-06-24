@@ -1,41 +1,47 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import MainContent from "../components/Maincontent";
 import Pagination from "../components/Pagination";
 import Transcript from "../components/Transcript";
 import Spinner from "../components/Spinner";
 import ToggleButton from "../components/ToggleButton";
-import fetchTranscripts from "../services.js/fetchTranscripts";
+import { fetchTranscripts } from "../services/serviceApis";
 
-const ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDUwNTE5MiwiZXhwIjoxNzUwNTkxNTkyfQ.nne0ReiCsDJQ-cqy3gnRydmmSPQPLxfutNyUkN_T2es";
 const LIMIT = 10;
 const Home = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const paramsObject = Object.fromEntries(searchParams.entries());
+
+  const { isSortedTranscripts, page } = paramsObject;
+  const parsedPage = parseInt(page, 10);
+
   const [transcripts, setTranscripts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parsedPage || 1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(
+    isSortedTranscripts ? isSortedTranscripts : false
+  );
   const [error, setError] = useState("");
 
   // page,
   // limit,
   // toggle,
   // accessToken,
-  // setLoading,
-  // setTranscripts,
-  // setTotalCount,
-  // setError
 
   useEffect(() => {
     async function setStates() {
       const { loadingState, totalCountState, transcriptsState, errorState } =
-        await fetchTranscripts(currentPage, LIMIT, false, ACCESS_TOKEN);
+        await fetchTranscripts(currentPage, LIMIT, toggle);
       setLoading(loadingState);
       setTotalCount(totalCountState);
       setTranscripts(transcriptsState);
       setError(errorState);
       console.log("Hello");
+      setSearchParams({ page: currentPage, isSortedTranscripts: toggle });
+      console.log("isSortedTranscripts: ", toggle);
     }
     setStates();
   }, [currentPage, toggle]);
@@ -55,7 +61,7 @@ const Home = () => {
             <Spinner />
           ) : (
             <div className="w-full">
-              {transcripts.map((el) => (
+              {transcripts.map((el, index) => (
                 <Transcript
                   videoId={el.videoId}
                   title={el.title}
@@ -64,6 +70,9 @@ const Home = () => {
                   summary={el.summary}
                   newsChannel={el.newsChannel}
                   removeActionSection={false}
+                  toggle={toggle}
+                  limit={LIMIT}
+                  summaryPage={(currentPage - 1) * LIMIT + index + 1}
                 />
               ))}
 
