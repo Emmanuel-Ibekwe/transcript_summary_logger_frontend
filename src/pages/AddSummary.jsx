@@ -7,11 +7,13 @@ import Button from "../components/Button";
 import { fetchTranscripts } from "../services/serviceApis";
 import ReadMore from "../components/ReadMore";
 import Pagination from "../components/Pagination";
+import api from "../services/axiosInstance";
 
 const AddSummary = () => {
-  const ACCESS_TOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhYTdhMDNlYTBkMzJiM2Y1OTY3M2UiLCJlbWFpbCI6ImliZWt3ZWVtbWFudWVsMDA3QGdtYWlsLmNvbSIsImlhdCI6MTc1MDY1MjkzMCwiZXhwIjoxNzUwNzM5MzMwfQ.vkrpqi97msf2F2puh-_-JV8UNRSU_i1pnlA9X0lrpLA";
+  // const transcript.summary =
+  //   "Under the golden sunset, children played by the riverbank, their laughter echoing through the valley. Birds soared overhead, casting fleeting shadows on the water. An old man watched from a wooden bench, his cane resting beside him. The air smelled of pine and damp earth, whispering stories of the past. Peace lingered in every breath, still and timeless.";
   const LIMIT = 1;
+  const MIN_SUMMARY_LENGTH = 30;
   const [searchParams, setSearchParams] = useSearchParams();
   const paramsObject = Object.fromEntries(searchParams.entries());
 
@@ -23,18 +25,52 @@ const AddSummary = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(
+    transcript.summary?.length >= MIN_SUMMARY_LENGTH ? false : true
+  );
+  const [textAreaValue, setTextAreaValue] = useState("");
 
-  // page,
-  //   limit,
-  //   accessToken,
-  //   setLoading,
-  //   setTranscripts,
-  //   setTotalCount,
-  //   setError
+  const handleSubmit = async () => {
+    if (transcript.summary?.length >= MIN_SUMMARY_LENGTH && !isSubmit) {
+      setIsSubmit(true);
+      setTextAreaValue(transcript.summary);
+      return;
+    }
+
+    const payload = { summary: textAreaValue.trim() };
+    try {
+      setIsSubmitting(true);
+      const response = await api.post(
+        `/${transcript._id}/add-summary`,
+        payload
+      );
+
+      console.log(response.data);
+      const uploadedSummary = response.data.summary;
+      const updatedTranscript = { ...transcript, summary: uploadedSummary };
+      setIsSubmit(false);
+      setTranscript(updatedTranscript);
+      if (uploadedSummary) {
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
+      setError(error.response.data.message);
+    }
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     setSearchParams({ page, isSortedTranscripts });
+    setIsSubmit(
+      transcript.summary?.length >= MIN_SUMMARY_LENGTH ? false : true
+    );
+  };
+
+  const handleChangeTextArea = (e) => {
+    setTextAreaValue(e.target.value);
   };
 
   useEffect(() => {
@@ -43,17 +79,41 @@ const AddSummary = () => {
         await fetchTranscripts(currentPage, LIMIT, isSortedTranscripts);
       setLoading(loadingState);
       setTotalCount(totalCountState);
+
       if (transcriptsState.length > 0) {
         setTranscript(transcriptsState[0]);
       } else {
         setTranscript(null);
       }
 
+      if (transcriptsState[0].summary) {
+        setTextAreaValue(transcriptsState[0].summary);
+      } else {
+        setTextAreaValue("");
+      }
+
+      setIsSubmit(
+        transcriptsState[0].summary?.length >= MIN_SUMMARY_LENGTH ? false : true
+      );
+
       setError(errorState);
-      console.log("Hello");
+      // console.log("Hello");
+      // console.log("transcriptState: ", transcriptsState);
+      // console.log(
+      //   "transcriptsState.summary?.length >= MIN_SUMMARY_LENGTH: ",
+      //   transcriptsState[0].summary?.length >= MIN_SUMMARY_LENGTH
+      // );
+      // console.log(
+      //   "transcriptsState.summary?.length: ",
+      //   transcriptsState.summary[0]?.length
+      // );
+      // console.log("isSubmit 1: ", isSubmit);
     }
     setStates();
   }, [currentPage]);
+
+  console.log("isSubmit 2: ", isSubmit);
+  console.log("transcript: ", transcript);
 
   return (
     <MainContent>
@@ -83,26 +143,28 @@ const AddSummary = () => {
               >
                 Summary
               </label>
-              {transcript.summary >= 200 ? (
-                <ReadMore text={transcript.summary >= 200} />
+              {transcript.summary?.length >= MIN_SUMMARY_LENGTH && !isSubmit ? (
+                <ReadMore text={transcript.summary} isCopyRemoved={true} />
               ) : (
                 <textarea
                   className="bg-[#e0e0e0] w-full h-30 resize-none p-2 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400 scrollbar-track-gray-100 overflow-y-auto overflow-x-hidden"
                   name=""
                   id={`summary-${"dddd"}`}
+                  value={textAreaValue}
+                  onChange={handleChangeTextArea}
                 />
               )}
-              <div>
-                {transcript.summary >= 200 ? (
-                  <Button isSubmit={true} onClick={() => {}}>
-                    Submit
+              {
+                <div className="flex justify-end">
+                  <Button isSubmit={true} onClick={handleSubmit}>
+                    {isSubmitting
+                      ? "Submitting..."
+                      : isSubmit
+                      ? "Submit"
+                      : "Edit Summary"}
                   </Button>
-                ) : (
-                  <Button isSubmit={false} onClick={() => {}}>
-                    {transcript.summary >= 200 ? "Edit Summary" : "Submit"}
-                  </Button>
-                )}
-              </div>
+                </div>
+              }
             </div>
             <Pagination
               totalCount={totalCount}
