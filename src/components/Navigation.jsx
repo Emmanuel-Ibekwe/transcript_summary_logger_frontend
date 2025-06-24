@@ -1,15 +1,31 @@
 import { useSelector, useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../store/userSlice";
 
 const Navigation = () => {
   const { accessToken } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/refresh");
+    setTimeout(() =>
+      navigate(
+        "/transcripts?page=1&isSortedTranscripts=false",
+        {
+          replace: true,
+        },
+        1000
+      )
+    );
+  };
 
   return (
     <>
       <div className="h-12 bg-[#333333] px-2 text-white text-2xl flex justify-between items-center">
-        Summary Logger
+        <div className="cursor-pointer" onClick={handleLogoClick}>
+          Summary Logger
+        </div>
         <ul className="flex items-center space-x-2 text-base">
           {!accessToken && (
             <li>
