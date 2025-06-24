@@ -2,7 +2,7 @@ import api from "./axiosInstance";
 
 export const fetchTranscripts = async (page, limit, toggle) => {
   let loadingState, totalCountState, transcriptsState, errorState;
-
+  console.log("inside fetchTranscripts");
   try {
     const response = await api.get(
       `/transcripts?page=${page}&isSortedTranscripts=${toggle}&limit=${limit}`
