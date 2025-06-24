@@ -3,7 +3,7 @@ import Button from "./Button";
 import { Link } from "react-router-dom";
 import { capitalizeTitle } from "../utils/formatting";
 
-const MIN_SUMMARY_LENGTH = 200;
+const MIN_SUMMARY_LENGTH = 40;
 
 const Transcript = ({
   videoId,
