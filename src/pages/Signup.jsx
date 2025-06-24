@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import MainContent from "../components/Maincontent";
 import { isPasswordInvalid, isValidEmail } from "../utils/validation";
 
@@ -89,9 +90,12 @@ const Signup = () => {
         {/* {----Actions----} */}
         <div className="flex justify-between w-full pt-1.5">
           <div className="flex space-x-2">
-            <div className="text-sm text-blue-400 hover:cursor-pointer hover:text-[#C3C3C3]">
+            <Link
+              to="/login"
+              className="text-sm text-blue-400 hover:cursor-pointer hover:text-[#C3C3C3]"
+            >
               Login
-            </div>
+            </Link>
           </div>
           <div>
             <button
