@@ -1,5 +1,6 @@
 import ReadMore from "./ReadMore";
 import Button from "./Button";
+import { Link } from "react-router-dom";
 import { capitalizeTitle } from "../utils/formatting";
 
 const MIN_SUMMARY_LENGTH = 200;
@@ -12,7 +13,10 @@ const Transcript = ({
   summary,
   newsChannel,
   removeActionSection,
+  toggle,
+  summaryPage,
 }) => {
+  console.log("videoId: ", videoId);
   return (
     <div
       className="max-w-[80%] mx-auto px-4 pb-4 pt-1 border-b-2 border-[#E0E0E0] "
@@ -50,11 +54,16 @@ const Transcript = ({
       )}
       {!removeActionSection && (
         <div className="w-full flex justify-end items-center">
-          <Button onClick={() => {}}>
-            {summary.length >= MIN_SUMMARY_LENGTH
-              ? "View summary"
-              : "Enter summary"}
-          </Button>
+          <Link
+            to={`/transcripts/${videoId}?page=${summaryPage}&isSortedTranscripts=${toggle}`}
+            onClick={() => {}}
+          >
+            <Button>
+              {summary.length >= MIN_SUMMARY_LENGTH
+                ? "View summary"
+                : "Enter summary"}
+            </Button>
+          </Link>
         </div>
       )}
     </div>
