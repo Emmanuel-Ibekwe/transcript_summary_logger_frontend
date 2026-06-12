@@ -77,26 +77,32 @@ const AddSummary = () => {
     async function setStates() {
       const { loadingState, totalCountState, transcriptsState, errorState } =
         await fetchTranscripts(currentPage, LIMIT, isSortedTranscripts);
-      setLoading(loadingState);
-      setTotalCount(totalCountState);
+      if (!errorState) {
+        setLoading(loadingState);
+        setTotalCount(totalCountState);
 
-      if (transcriptsState.length > 0) {
-        setTranscript(transcriptsState[0]);
+        if (transcriptsState.length > 0) {
+          setTranscript(transcriptsState[0]);
+        } else {
+          setTranscript(null);
+        }
+
+        if (transcriptsState[0].summary) {
+          setTextAreaValue(transcriptsState[0].summary);
+        } else {
+          setTextAreaValue("");
+        }
+
+        setIsSubmit(
+          transcriptsState[0].summary?.length >= MIN_SUMMARY_LENGTH
+            ? false
+            : true
+        );
       } else {
-        setTranscript(null);
+        setLoading(loadingState);
+        setError(errorState);
       }
 
-      if (transcriptsState[0].summary) {
-        setTextAreaValue(transcriptsState[0].summary);
-      } else {
-        setTextAreaValue("");
-      }
-
-      setIsSubmit(
-        transcriptsState[0].summary?.length >= MIN_SUMMARY_LENGTH ? false : true
-      );
-
-      setError(errorState);
       // console.log("Hello");
       // console.log("transcriptState: ", transcriptsState);
       // console.log(
