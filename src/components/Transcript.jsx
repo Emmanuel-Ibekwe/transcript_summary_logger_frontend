@@ -33,7 +33,7 @@ const Transcript = ({
         News channel:{" "}
         <span className="text-[#bca79a">{`${newsChannel}`.toUpperCase()}</span>
       </div>
-      <ReadMore text={transcript} maxChars={300} />
+      <ReadMore text={transcript} maxChars={300} title={title} />
       {!removeActionSection && (
         <div className="flex w-1/3 justify-between items-center">
           <p className="text-slate-500 font-semibold">Has Summary</p>
