@@ -20,7 +20,7 @@ export const fetchTranscripts = async (page, limit, toggle) => {
   } catch (error) {
     console.log(error);
     loadingState = false;
-    errorState = error.response.data.message;
+    errorState = error?.response?.data?.message || error.message;
     return { loadingState, totalCountState, transcriptsState, errorState };
   }
 };
