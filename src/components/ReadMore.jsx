@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ReadMore = ({ text, maxChars = 200, isCopyRemoved = false }) => {
+const ReadMore = ({ text, maxChars = 200, isCopyRemoved = false, title }) => {
   const [expanded, setExpanded] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [copyError, setCopyError] = useState("");
@@ -14,7 +14,7 @@ const ReadMore = ({ text, maxChars = 200, isCopyRemoved = false }) => {
   const handleCopy = async () => {
     try {
       setCopyError("");
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(`${title}. ${text}`);
       setIsClicked(true);
       setTimeout(() => {
         setIsClicked(false);
